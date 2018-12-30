@@ -1,0 +1,12 @@
+{
+    "version":"43.0",
+    "xmlns":"http://soap.sforce.com/2006/04/metadata",
+    "encoding":"UTF-8",
+    "metadata":[
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger"
+        ],
+    "file_name":"package.xml"
+}
