@@ -1,0 +1,26 @@
+width
+height
+
+bg - background
+fg - foreground
+bd - border
+
+element = ELementType(parent, text="")
+element.pack() # to place it inside of the 
+
+pack(side=LEFT/RIGHT/TOP/BOTTOM)
+LEFT - makes its stick to the left, same way RIGHT TO RIGHT
+fill = X horizontal <---  --->
+fill = Y veritical  up and down
+
+fill - is used to grow element depending upon the expansion of the parent.
+
+
+grid 
+
+row & column - this goes ahead and specifies the location of the table.
+grid uses (NWES - uses North West East South) for the positioning of the elements.
+sticky = N | W | E | S
+	- This is used to align of the value.
+
+

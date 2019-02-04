@@ -1,0 +1,18 @@
+{
+    "orgName": "Enzigma-Org",
+    "edition": "Developer",
+    "features": ["Chatbot"],
+    "settings": {
+        "orgPreferenceSettings": {
+            "networksEnabled": true,
+            "s1DesktopEnabled": true,
+            "s1EncryptedStoragePref2": false
+        },
+        "omniChannelSettings": {
+            "enableOmniChannel": true
+        },
+        "caseSettings": {
+            "systemUserEmail": "chriscode@chriscode.com"
+        }
+    }
+  }

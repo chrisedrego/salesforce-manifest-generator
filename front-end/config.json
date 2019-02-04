@@ -1,0 +1,14 @@
+{
+    "version":"43.0",
+    "xmlns":"http://soap.sforce.com/2006/04/metadata",
+    "encoding":"UTF-8",
+    "metadata":[
+        "ApexClass",
+        "ApexComponent",
+        "ApexPage",
+        "ApexTrigger","CustomLabel","CustomField","CustomObject","CustomTab","PermissionSet","Profile","SharingRules"
+        ,"StaticResource","ValidationRule","Workflow"
+        ],
+    "file_name":"package.xml",
+    "deployed_commit":""
+}

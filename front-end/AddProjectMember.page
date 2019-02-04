@@ -1,0 +1,267 @@
+<apex:page controller="AddProjectMemberController" showHeader="false" action="{!InitializeMember}">
+<head>
+        <title>{!IF( IsProgram, 'Add Program Member', 'Add Project Member')}</title>
+    </head>
+    
+    <link type="text/css" href="{!URLFOR($Resource.jQueryAPI, '/css/redmond/jquery-ui-1.10.2.custom.css')}" rel="stylesheet" />
+    <link type="text/css" href="{!URLFOR($Resource.jQueryAPI, '/css/autocompletecss.css')}" rel="stylesheet" />
+    
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-1.9.1.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-ui-1.10.2.custom.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery.blockUI.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/autocompletejs.js')}"></script>
+    
+    <style type="text/css">
+        .PageBody
+        {           
+            background: #E6E6E6;
+        }
+        .member-role
+         { 
+            margin:0px;
+            padding:0px;
+            box-shadow: 10px 10px 5px #888888;
+            border:1px solid #000000;
+            
+         }
+        .cField{ width:200px;}
+        #memberTable
+        {
+            box-shadow: 4px 4px  #888888;
+            border:2px solid gray;
+            font: normal;
+            width: 80%;
+            margin-left: 9em;
+            padding-bottom: 2em;
+            border-radius: 2em;
+            background: white ;
+        }
+        .guidanceText
+        {
+            box-shadow: 4px 4px  #888888;
+            border:2px solid gray;
+            font: normal;
+            width: 80%;
+            margin-left: 9em;
+            padding-bottom: 2em;
+            border-radius: 2em;
+            background: white ;
+        }
+        #sectionName
+        {
+            font-size: x-small;
+            margin-left: 1em;
+        }
+        #outerHeading
+        {
+            font-size: medium;
+        }
+        
+        .roles
+        {       
+            text-align: right;
+        }
+        
+        .roleName
+        {
+            padding-left: 3em;          
+            text-align: left;
+        }
+        .roleAndMember
+        {
+            background: #F2F2F2;
+        }
+        
+        .bPageBlock
+        {
+            background: #E6E6E6 !important ;
+        }
+        .OuterSection
+        {
+            text-align: right;
+        }
+        .RoleHeading
+        {
+            padding-left: 12em ; 
+            text-align: end ;   
+        }
+        #fundingGuidance
+        {
+            width: 87%;
+            margin: 20px 1px 0px 40px;
+            background: #E2DDDD;
+            padding: 15px 15px 15px 15px;
+            border-radius: 2em;
+        }
+        .programProjectGuidance
+        {
+            width: 87%;
+            margin: 20px 1px 0px 40px;
+            background: #E2DDDD;
+            padding: 15px 15px 15px 15px;
+            border-radius: 2em;
+        }
+    </style>
+    
+    <script type="text/javascript">
+        
+        $(document).ready(function()
+        {
+            ShowProcessing();
+            setTimeout(function(){HideProcessing()}, 2000);
+            setTimeout("jQuery('span[id$=addMemberMessage]').hide();",3000 );
+            $('#memberPageBlock').css('background-color','gray');
+            /*if(!{!isEditable})
+            {
+            alert("You cannot add or edit members. Either you are a test user or this is a test data.");
+            window.close();
+            }*/
+        });
+        
+        function ShowProcessing()
+        {
+            $.blockUI( { message: '<h1><img src="{!URLFOR($Resource.jQueryAPI, '/images/busy.gif')}" /> Processing...</h1>'});
+        }
+        
+        function HideProcessing()
+        {
+            $.unblockUI();
+        }
+        
+        function noenter(e){
+             var key;    
+             if(window.event)
+                  key = window.event.keyCode; //IE
+             else
+                  key = e.which; //firefox    
+        
+             return (key != 13);    
+
+        }
+        
+        function disableautocomplete() {
+          var forms = document.getElementsByTagName('form');
+          
+          for (var i = 0; i < forms.length; ++i) {
+            if (forms[i].setAttribute) {
+              forms[i].setAttribute('autocomplete', 'off')
+            } else {
+              forms[i].autocomplete = 'off'
+            }
+          }
+        }
+        
+        if (window.addEventListener) {
+          window.addEventListener('load', disableautocomplete, true)
+        } else if (window.attachEvent) {
+          window.attachEvent('onload', disableautocomplete)
+        } else {
+          window.onload = disableautocomplete
+        }
+        
+        function OnSaveComplete( strResult, strUrl)
+        {
+            window.scrollTo(0, 0);
+            if( strResult != '')
+            {
+                var result = $.parseJSON( strResult);
+                if( result.IsSuccess )
+                {
+                    setTimeout(function(){HideProcessing()}, 2000);
+                    window.open(location.protocol + '//' + location.host +'/'+ strUrl,'_self');
+                }
+            }
+            else
+                HideProcessing();
+        }
+        
+        function ClosememberPage()
+        {
+            window.close();
+        }
+       
+    </script>
+    
+    <body class="PageBody" >
+    
+        <apex:form id="memberForm"> 
+            <div style="width: 80%; margin: auto; font:normal;">
+                <apex:outputpanel layout="block" style="margin:10px;" id="m_outputpanel">
+                    <div Id="outerHeading">
+                        <apex:sectionHeader title="" subtitle="{!IF( IsProgram, 'Add Program Members', IF(IsProject, 'Add Project Members', IF(IsDisaster,'Add Disaster Project Members','Add Funding Members')))}" />
+                    </div>
+                    <div Id="outerDiv">
+                    <apex:pageBlock id="memberPageBlock" >
+                        <apex:pageMessages Id="addMemberMessage" escape="false"/>
+            
+                        <div id="memberTable">
+                            <div id="fundingGuidance" style="display:{!if(IsFunding,"block","none")};">
+                                <apex:outputText value="{!$Label.Guidance_on_funding_member_page}" escape="false" />                                
+                            </div>
+                            <div class="programProjectGuidance" style="display:{!if(IsFunding,"none","block")};">
+                                    <apex:outputText value="{!$Label.Guidance_on_program_project_member_page}" escape="false" />
+                            </div>
+                            <Table style="width: 100%;">                            
+                                <tr class="OuterSection">
+                                    <th class="RoleHeading">
+                                        <apex:sectionHeader title="" subtitle="Roles" />                            
+                                    </th>
+                                    <th>
+                                        <apex:sectionHeader title="" subtitle="Members" />
+                                    </th>
+                                </tr>                                                                       
+                                <apex:repeat value="{!lstOnlyAvailableSection}" var="section">                                  
+                                    <tr>
+                                        <th>
+                                            <div Id="sectionName">
+                                                <apex:sectionHeader title="" subtitle="{!section.Label}" />
+                                            </div>  
+                                        </th>   
+                                    </tr>
+                                    <apex:repeat value="{!mapProjectMemberByType[section.Type]}" var="Role">
+                                        <tr class="roleAndMember">
+                                            <th class="roles">                                  
+                                                <apex:outputText value="{!Role.ProjectMember.Project_Role__c}" />
+                                            </th>
+                                            <th class="roleName">   
+                                                <apex:outputText rendered="{!IsMemberExist && Role.ProjectMember.Project_Role__c != 'Executive Director' && !Role.IsReadOnly}">
+                                                    <apex:inputField onkeypress="return noenter(event)" value="{!Role.ProjectMember.Member__c}" Id="accname" styleClass="cField">
+                                                        <c:autocomplete Width="300" ClassName="autocomplete" InputId="{!$Component.accname}" AutoCompleteId="accACid_{!Role.InternalId}" ObjectName="Contact" Filter="From_User__c != null" />
+                                                    </apex:inputField>
+                                                </apex:outputText>
+                                                
+                                                <apex:outputText rendered="{!IsMemberExist && Role.ProjectMember.Project_Role__c != 'Executive Director' && Role.IsReadOnly}">
+                                                    <apex:outputText value="{!Role.ContactName}" id="defaultRoleOutputText"/>
+                                                </apex:outputText>
+                                                
+                                                <apex:outputText rendered="{!IsMemberExist && Role.ProjectMember.Project_Role__c == 'Executive Director'}">
+                                                    <apex:selectList id="one" value="{!ExecutiveValue}" size="1">
+                                                        <apex:selectOptions value="{!Picklist}"/>
+                                                    </apex:selectList>
+                                                </apex:outputText>
+                                            </th>
+                                        </tr>
+                                    </apex:repeat> 
+                                </apex:repeat>                                                                              
+                                </Table>
+                            </div>
+                    </apex:pageBlock>
+                    </div>
+                    <div align="center" Id="button">
+                        <apex:commandButton id="saveMemberButton" value="Save" onClick="ShowProcessing(); AddNewMembers(); return false;" rendered="{!IsMemberExist}"/>
+                        <apex:commandButton id="ClosePage" value="Close" onClick="ClosememberPage(); return false;"/>
+                    </div>
+                </apex:outputpanel>
+            </div>
+            <apex:actionFunction name="AddNewMembers" action="{!AddProjectMembers}" oncomplete="OnSaveComplete('{!ResultString}', '{!ProjectMemberMatrixLink}'); return false;" rerender="m_outputpanel, addMemberMessage" >
+            </apex:actionFunction>
+        </apex:form>
+        
+        <apex:outputPanel id="errorPanel" rendered="{!!isEditable}">
+        
+        
+        </apex:outputPanel>
+        
+    </body>                         
+
+</apex:page>
